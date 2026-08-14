@@ -1,8 +1,10 @@
-# 🦊 Colors with Frederic
+# Colors with Frederic — a FrenchetVoila lesson
 
 An interactive, one-page **French colors mini-lesson for a 5-year-old** with no French
-background. A friendly guide named **Frederic** teaches four color words through
-flip-to-reveal **flash cards** and a listen-and-find **game**.
+background. Your teacher **Frederic** (shown with his own photo) guides the child through
+four color words using flip-to-reveal **flash cards** and a listen-and-find **game**.
+
+Brought to you by **FrenchetVoila** — *French made fun.*
 
 Because the child has no French, **every instruction is in English** — spoken and
 shown. The *only* French is the four color words themselves, which are always
@@ -86,7 +88,7 @@ server.js             Dependency-free static server (also used by the tests)
 vercel.json           Hosting config: serve as a plain static site (no build)
 docs/LESSON_PLAN.md   The teacher's 5-minute script
 tests/                Playwright tests (data + full end-to-end journeys)
-assets/               Screenshots
+assets/               Frederic's photo (frederic-avatar.jpg) + screenshots
 ```
 
 ---
