@@ -28,6 +28,18 @@ test.describe('Welcome screen', () => {
     await expect(page.locator('#welcome-title')).toContainText('Colors');
   });
 
+  test('shows Frederic\'s photo and the FrenchetVoila brand', async ({ page }) => {
+    // The teacher is Frederic's photo (no fox emoji), loaded from assets.
+    const hero = page.locator('.screen[data-step="welcome"] .avatar-lg');
+    await expect(hero).toHaveAttribute('src', /frederic-avatar\.jpg$/);
+    await expect(hero).toHaveAttribute('alt', /Frederic/);
+    // The photo actually decodes (natural size > 0), not a broken image.
+    await expect.poll(() => hero.evaluate((img) => img.complete && img.naturalWidth))
+      .toBeGreaterThan(0);
+    // The teaching enterprise is named on the page.
+    await expect(page.locator('.brand-name').first()).toHaveText('FrenchetVoila');
+  });
+
   test('the four flash cards are built and hidden as colours to begin', async ({ page }) => {
     const cards = page.locator('.card');
     await expect(cards).toHaveCount(4);

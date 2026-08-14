@@ -129,14 +129,52 @@ body {
   margin-top: clamp(10px, 4vh, 40px);
 }
 
-.guide-hero {
-  font-size: clamp(66px, 16vw, 120px);
-  line-height: 1;
-  animation: hero-bob 2.4s ease-in-out infinite;
+/* Frederic's photo avatar, shown as a friendly circle everywhere the mascot was */
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #fff;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.12);
+  background: #eef3ff;
+  display: block;
 }
-.guide-cheer { animation: hero-cheer 0.8s ease-in-out infinite; }
-@keyframes hero-bob { 50% { transform: translateY(-12px) rotate(-4deg); } }
-@keyframes hero-cheer { 25% { transform: rotate(-8deg) scale(1.05); } 75% { transform: rotate(8deg) scale(1.05); } }
+.avatar-lg {
+  width: clamp(116px, 27vw, 158px);
+  height: clamp(116px, 27vw, 158px);
+  margin: 2px auto 6px;
+}
+.avatar-sm { width: 60px; height: 60px; }
+.avatar-bob { animation: hero-bob 2.6s ease-in-out infinite; }
+.avatar-cheer { animation: hero-cheer 0.9s ease-in-out infinite; }
+@keyframes hero-bob { 50% { transform: translateY(-10px); } }
+@keyframes hero-cheer { 25% { transform: rotate(-5deg) scale(1.04); } 75% { transform: rotate(5deg) scale(1.04); } }
+
+.avatar-wrap { position: relative; display: inline-block; }
+.avatar-badge {
+  position: absolute; right: -6px; bottom: 4px;
+  font-size: clamp(30px, 7vw, 46px);
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.25));
+}
+
+/* ---------- FrenchetVoila brand (the teaching enterprise) ---------- */
+.brand {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  margin-bottom: 12px;
+}
+.brand-name {
+  font-weight: 800; font-size: clamp(21px, 5.2vw, 27px); letter-spacing: -0.5px;
+  line-height: 1;
+}
+.brand-name .b1 { color: var(--ink); }
+.brand-name .b2 {
+  background: linear-gradient(90deg, var(--bleu), var(--vert) 45%, var(--rouge));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.brand-tag {
+  font-size: clamp(10px, 3vw, 12px); font-weight: 800; color: #a89ec7;
+  text-transform: uppercase; letter-spacing: 2px;
+}
+.brand-small { margin: 8px 0 2px; }
 
 .title { margin: 10px 0 6px; line-height: 1.02; }
 .title-main {
@@ -320,10 +358,6 @@ body {
   font-size: clamp(14px, 3.6vw, 18px);
   box-shadow: 0 6px 0 rgba(0,0,0,0.1);
   max-width: min(70vw, 440px);
-}
-.guide-avatar {
-  font-size: 54px; line-height: 1;
-  filter: drop-shadow(0 4px 3px rgba(0,0,0,0.2));
 }
 .guide-bounce { animation: guide-bounce 0.6s ease; }
 @keyframes guide-bounce { 30% { transform: translateY(-14px) rotate(-6deg); } 60% { transform: translateY(0) rotate(4deg); } }
