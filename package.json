@@ -1,0 +1,19 @@
+{
+  "name": "les-couleurs-avec-leo",
+  "version": "1.0.0",
+  "description": "An interactive 5-minute French colours mini-lesson for a 5-year-old — flip the flash cards to reveal Rouge, Bleu, Jaune and Vert, then play the listen-and-find game with Léo the fox.",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "serve": "node server.js",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "keywords": ["french", "kids", "education", "colors", "couleurs", "flashcards", "mini-lesson"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.56.0"
+  }
+}

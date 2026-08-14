@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Les Couleurs avec Léo — a playful 5-minute French colours mini-lesson for a 5-year-old. Flip the flash cards to reveal Rouge, Bleu, Jaune and Vert.">
+  <meta name="theme-color" content="#7ec8ff">
+  <title>Les Couleurs avec Léo 🦊 — French for Kids</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🦊%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- floating clouds + sun set the friendly outdoor scene -->
+  <div class="sky" aria-hidden="true">
+    <div class="sun"></div>
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+  </div>
+
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <!-- sound on/off, always reachable -->
+  <button id="sound-toggle" class="sound-toggle" type="button"
+          aria-pressed="true" aria-label="Couper le son">🔊</button>
+
+  <main class="stage">
+
+    <!-- progress dots: 4 steps -->
+    <div class="progress" role="progressbar" aria-label="Progression de la leçon"
+         aria-valuemin="1" aria-valuemax="4">
+      <span class="progress-dot" title="Bonjour"></span>
+      <span class="progress-dot" title="Les couleurs"></span>
+      <span class="progress-dot" title="Le jeu"></span>
+      <span class="progress-dot" title="Bravo"></span>
+    </div>
+
+    <!-- ===================== STEP 1 · WELCOME ===================== -->
+    <section class="screen is-active" data-step="welcome" aria-hidden="false"
+             aria-labelledby="welcome-title">
+      <div class="welcome-card">
+        <div class="leo-hero" aria-hidden="true">🦊</div>
+        <h1 id="welcome-title" class="title">
+          <span class="title-fr">Les Couleurs</span>
+          <span class="title-en">Colours in French</span>
+        </h1>
+        <p class="lead">Salut&nbsp;! Je m'appelle&nbsp;<strong>Léo&nbsp;le&nbsp;Renard</strong>.<br>
+          On va apprendre <strong>4&nbsp;couleurs</strong> en français&nbsp;! 🎨</p>
+        <button id="start-btn" class="big-btn" type="button">
+          <span class="big-btn-emoji">▶️</span> Commencer&nbsp;!
+        </button>
+        <p class="subtle">Pour les enfants de 5&nbsp;ans · 5&nbsp;minutes</p>
+      </div>
+    </section>
+
+    <!-- ===================== STEP 2 · FLASH CARDS ===================== -->
+    <section class="screen" data-step="cards" aria-hidden="true"
+             aria-labelledby="cards-title">
+      <h2 id="cards-title" class="step-title">Clique pour voir la couleur&nbsp;! 🎨</h2>
+      <div id="deck" class="deck" role="group" aria-label="Cartes des couleurs"></div>
+      <button id="to-game" class="big-btn next-btn" type="button">
+        On joue&nbsp;? <span class="big-btn-emoji">🎲</span>
+      </button>
+    </section>
+
+    <!-- ===================== STEP 3 · THE GAME ===================== -->
+    <section class="screen" data-step="game" aria-hidden="true"
+             aria-labelledby="game-prompt">
+      <div id="game-stars" class="stars" aria-label="Étoiles gagnées"></div>
+      <h2 id="game-prompt" class="step-title game-prompt" aria-live="assertive">
+        Trouve la couleur&nbsp;!
+      </h2>
+      <div id="game-board" class="game-board" role="group"
+           aria-label="Choisis la bonne couleur"></div>
+    </section>
+
+    <!-- ===================== STEP 4 · CELEBRATION ===================== -->
+    <section class="screen" data-step="finish" aria-hidden="true"
+             aria-labelledby="finish-title">
+      <div class="welcome-card">
+        <div class="leo-hero leo-cheer" aria-hidden="true">🦊🏆</div>
+        <h2 id="finish-title" class="title">
+          <span class="title-fr">Bravo&nbsp;!</span>
+          <span class="title-en">You did it!</span>
+        </h2>
+        <p class="score-label">Ton score</p>
+        <p id="final-score" class="final-score">0 / 4</p>
+        <p class="lead">Tu connais <strong>Rouge, Bleu, Jaune</strong> et <strong>Vert</strong>&nbsp;! 🌈</p>
+        <div class="finish-btns">
+          <button id="again-btn" class="big-btn" type="button">
+            <span class="big-btn-emoji">🔁</span> Rejouer
+          </button>
+          <button id="replay-btn" class="big-btn ghost-btn" type="button">
+            <span class="big-btn-emoji">🏠</span> Recommencer
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Léo the guide sits at the bottom with a speech bubble -->
+    <div class="leo-guide" aria-hidden="true">
+      <div id="leo-bubble" class="leo-bubble">Bonjour&nbsp;! 👋</div>
+      <div id="leo" class="leo-avatar">🦊</div>
+    </div>
+
+  </main>
+
+  <!-- data first, then controller -->
+  <script src="js/colors.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
