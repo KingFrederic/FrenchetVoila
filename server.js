@@ -58,7 +58,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🦊  Les Couleurs avec Léo → http://localhost:${PORT}`);
+  console.log(`🦊  Colors with Frederic → http://localhost:${PORT}`);
 });
 
 module.exports = server;

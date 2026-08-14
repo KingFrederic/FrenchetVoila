@@ -13,15 +13,23 @@ test.describe('lesson data · js/colors.js', () => {
 
   test('every colour is complete and well-formed', () => {
     for (const c of colors) {
-      expect(c.fr, 'French word').toBeTruthy();
-      expect(c.en, 'English word').toBeTruthy();
+      expect(c.fr, 'French colour word').toBeTruthy();
+      expect(c.en, 'English colour name').toBeTruthy();
       expect(c.say, 'pronunciation hint').toBeTruthy();
       expect(c.emoji, 'picture emoji').toBeTruthy();
-      expect(c.thingFr, 'French noun').toBeTruthy();
+      expect(c.thing, 'English picture-word').toBeTruthy();
       // Hex must be a valid 6-digit colour.
       expect(c.hex).toMatch(/^#[0-9A-Fa-f]{6}$/);
       expect(c.ink).toMatch(/^#[0-9A-Fa-f]{6}$/);
     }
+  });
+
+  test('the picture-word is English while the colour word stays French', () => {
+    // Only the four colour words should be French; everything else English.
+    expect(colors.map((c) => c.fr)).toEqual(['Rouge', 'Bleu', 'Jaune', 'Vert']);
+    expect(colors.map((c) => c.thing)).toEqual([
+      'a strawberry', 'a whale', 'the sun', 'a frog'
+    ]);
   });
 
   test('colours are visually distinct from one another', () => {

@@ -25,7 +25,7 @@ test.describe('Welcome screen', () => {
   test('opens on the welcome step with a start button', async ({ page }) => {
     await expect(page.locator('.screen[data-step="welcome"]')).toHaveClass(/is-active/);
     await expect(page.locator('#start-btn')).toBeVisible();
-    await expect(page.locator('#welcome-title')).toContainText('Les Couleurs');
+    await expect(page.locator('#welcome-title')).toContainText('Colors');
   });
 
   test('the four flash cards are built and hidden as colours to begin', async ({ page }) => {
@@ -56,13 +56,13 @@ test.describe('Flash cards', () => {
     await expect(card).toHaveAttribute('aria-pressed', 'true');
     const back = card.locator('.card-back');
     await expect(back).toHaveCSS('background-color', 'rgb(46, 134, 255)'); // #2E86FF
-    await expect(back.locator('.card-thing')).toHaveText('une baleine');
+    await expect(back.locator('.card-thing')).toHaveText('a whale'); // picture-word is English
   });
 
-  test('clicking a card speaks the French colour name', async ({ page }) => {
+  test('clicking a card speaks the French colour word', async ({ page }) => {
     await page.click('.card[data-color="vert"]');
     const spoken = await page.evaluate(() => window.__spoken.join(' | '));
-    expect(spoken).toContain('Vert');
+    expect(spoken).toContain('Vert'); // colour words stay French
   });
 
   test('clicking again flips the card back', async ({ page }) => {
@@ -78,7 +78,7 @@ test.describe('Flash cards', () => {
       await page.click(`.card[data-color="${id}"]`);
     }
     await expect(page.locator('#to-game')).toHaveClass(/is-ready/);
-    await expect(page.locator('#leo-bubble')).toContainText('Bravo');
+    await expect(page.locator('#guide-bubble')).toContainText('Great');
   });
 
   test('cards are keyboard operable (Enter flips)', async ({ page }) => {
@@ -98,7 +98,7 @@ test.describe('The game', () => {
 
   test('shows four colour swatches and asks for a colour', async ({ page }) => {
     await expect(page.locator('.swatch')).toHaveCount(4);
-    await expect(page.locator('#game-prompt')).toContainText('Trouve');
+    await expect(page.locator('#game-prompt')).toContainText('Find');
   });
 
   test('a correct tap is celebrated and advances the game', async ({ page }) => {
@@ -172,7 +172,7 @@ test.describe('Full journey + replay', () => {
     }
     await expect(page.locator('.screen[data-step="finish"]')).toHaveClass(/is-active/);
 
-    // "Recommencer" returns home and resets the flash cards.
+    // "Home" returns to the welcome screen and resets the flash cards.
     await page.click('#replay-btn');
     await expect(page.locator('.screen[data-step="welcome"]')).toHaveClass(/is-active/);
     await expect(page.locator('.card.is-flipped')).toHaveCount(0);

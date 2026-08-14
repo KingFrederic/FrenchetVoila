@@ -1,12 +1,13 @@
 /**
  * colors.js — The single source of truth for the lesson.
  *
- * Four first colours, chosen to be maximally distinct for a 5-year-old and
- * paired with a friendly picture-word (an emoji + its French noun) so the
- * child anchors the abstract colour to something real and lovable.
+ * The child is 5 and has no French background, so the ONLY French on the whole
+ * page is the four colour words themselves (Rouge, Bleu, Jaune, Vert). Every
+ * label, hint and picture-word is in English so the directions are understood;
+ * the French words are the one new thing to learn.
  *
  * This module works in two worlds:
- *   • the browser  — attaches `LESSON_COLORS` (and helpers) to `window`
+ *   • the browser  — attaches `LESSON` (and helpers) to the global
  *   • Node / tests — exports the same values via `module.exports`
  * so the exact data the child sees is the data the tests check.
  */
@@ -28,15 +29,14 @@
 
   /**
    * Each colour carries everything the UI and the audio need:
-   *  id       stable key used in code + tests
-   *  fr       the French word the child is learning (what the card shows first)
-   *  en       English, for the grown-up helping out
-   *  say      a gentle "sound it out" hint for the teacher / parent
-   *  hex      the exact colour revealed on the back of the card
-   *  ink      readable text colour to sit on top of `hex`
-   *  emoji    a real-world thing of that colour
-   *  thingFr  the French word for that thing (bonus vocabulary)
-   *  thingEn  English word for the thing
+   *  id     stable key used in code + tests
+   *  fr     the French colour word the child is learning (spoken in French)
+   *  en     the English colour name (for the grown-up helping out)
+   *  say    a gentle "sound it out" hint for the teacher / parent
+   *  hex    the exact colour revealed on the back of the card
+   *  ink    readable text colour to sit on top of `hex`
+   *  emoji  a real-world thing of that colour
+   *  thing  the English name for that thing (kept English on purpose)
    */
   var colors = [
     {
@@ -47,8 +47,7 @@
       hex: '#EF3D3D',
       ink: '#ffffff',
       emoji: '🍓',
-      thingFr: 'une fraise',
-      thingEn: 'a strawberry'
+      thing: 'a strawberry'
     },
     {
       id: 'bleu',
@@ -58,8 +57,7 @@
       hex: '#2E86FF',
       ink: '#ffffff',
       emoji: '🐳',
-      thingFr: 'une baleine',
-      thingEn: 'a whale'
+      thing: 'a whale'
     },
     {
       id: 'jaune',
@@ -69,8 +67,7 @@
       hex: '#FFC932',
       ink: '#5a3b00',
       emoji: '☀️',
-      thingFr: 'le soleil',
-      thingEn: 'the sun'
+      thing: 'the sun'
     },
     {
       id: 'vert',
@@ -80,8 +77,7 @@
       hex: '#37C871',
       ink: '#ffffff',
       emoji: '🐸',
-      thingFr: 'une grenouille',
-      thingEn: 'a frog'
+      thing: 'a frog'
     }
   ];
 

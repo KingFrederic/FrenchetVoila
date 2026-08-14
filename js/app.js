@@ -1,12 +1,15 @@
 /**
- * app.js — Léo le Renard runs the lesson.
+ * app.js — Frederic runs the lesson.
  *
  * A tiny, framework-free state machine that walks a five-year-old through
- * four screens:  Bonjour → Les Couleurs (flash cards) → Le Jeu (game) → Bravo.
+ * four screens:  Hello → The Colors (flash cards) → The Game → Great Job.
+ *
+ * The child has no French, so every instruction is in ENGLISH — spoken and
+ * shown. The only French is the four colour words, which are always
+ * pronounced in French (that is the thing being taught).
  *
  * Design rules for this audience:
  *   • Nothing can go "wrong". A wrong tap is a gentle "try again", never a fail.
- *   • Every important thing is said out loud (French) as well as shown.
  *   • Big targets, big feedback, lots of celebration.
  *
  * Testability: the whole controller is exposed as `window.app` with plain
@@ -44,9 +47,10 @@
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
-  // ----- audio: French voice + happy/gentle sound effects -------------------
+  // ----- audio: English instructions + French colour words + fun sounds -----
   var Audio = {
-    voice: null,
+    voiceFr: null,
+    voiceEn: null,
     ready: false,
     enabled: true,
     ctx: null,
@@ -55,10 +59,11 @@
       if (!('speechSynthesis' in window)) return;
       var pick = function () {
         var voices = window.speechSynthesis.getVoices() || [];
-        // Prefer a French voice; fall back to anything so the demo still speaks.
-        Audio.voice =
+        Audio.voiceFr =
           voices.filter(function (v) { return /^fr/i.test(v.lang); })[0] ||
-          voices.filter(function (v) { return /fr/i.test(v.name); })[0] ||
+          voices.filter(function (v) { return /fr/i.test(v.name); })[0] || null;
+        Audio.voiceEn =
+          voices.filter(function (v) { return /^en/i.test(v.lang); })[0] ||
           voices[0] || null;
         Audio.ready = true;
       };
@@ -66,19 +71,34 @@
       window.speechSynthesis.onvoiceschanged = pick;
     },
 
-    // Speak a French phrase. Cancels anything mid-sentence so taps feel instant.
-    say: function (text, opts) {
-      opts = opts || {};
+    _utter: function (text, lang) {
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = lang;
+      u.rate = 0.82;   // slow and clear for little ears
+      u.pitch = 1.12;  // a touch bright and friendly
+      var v = lang.slice(0, 2) === 'fr' ? Audio.voiceFr : Audio.voiceEn;
+      if (v) u.voice = v;
+      return u;
+    },
+
+    // Speak an English instruction. Cancels anything mid-sentence.
+    sayEn: function (text) { Audio._speak([{ text: text, lang: 'en-US' }]); },
+
+    // Speak a French colour word (this is the lesson content).
+    sayFr: function (text) { Audio._speak([{ text: text, lang: 'fr-FR' }]); },
+
+    // Speak a mix, in order — e.g. English lead-in then the French colour.
+    // parts: [{text, lang}, ...]
+    sayMix: function (parts) { Audio._speak(parts); },
+
+    _speak: function (parts) {
       if (!Audio.enabled) return;
       if (!('speechSynthesis' in window)) return;
       try {
         window.speechSynthesis.cancel();
-        var u = new SpeechSynthesisUtterance(text);
-        u.lang = 'fr-FR';
-        u.rate = opts.rate || 0.82;   // slow and clear for little ears
-        u.pitch = opts.pitch || 1.12; // a touch bright and friendly
-        if (Audio.voice) u.voice = Audio.voice;
-        window.speechSynthesis.speak(u);
+        parts.forEach(function (p) {
+          window.speechSynthesis.speak(Audio._utter(p.text, p.lang));
+        });
       } catch (e) { /* audio is a nicety, never a blocker */ }
     },
 
@@ -159,18 +179,20 @@
     }
   };
 
-  // ----- Léo the fox mascot: shows a message + speaks it --------------------
-  function leoSay(bubbleText, speakText) {
-    var bubble = $('#leo-bubble');
+  // ----- Frederic the guide: shows a message + speaks it --------------------
+  // speak can be a plain English string, or an array of {text, lang} parts
+  // when we want an English lead-in followed by the French colour word.
+  function guideSay(bubbleText, speak) {
+    var bubble = $('#guide-bubble');
     if (bubble) bubble.textContent = bubbleText;
-    var leo = $('#leo');
-    if (leo && !prefersReducedMotion()) {
-      leo.classList.remove('leo-bounce');
-      // reflow to restart the animation
-      void leo.offsetWidth;
-      leo.classList.add('leo-bounce');
+    var avatar = $('#guide-avatar');
+    if (avatar && !prefersReducedMotion()) {
+      avatar.classList.remove('guide-bounce');
+      void avatar.offsetWidth; // reflow to restart the animation
+      avatar.classList.add('guide-bounce');
     }
-    if (speakText) Audio.say(speakText);
+    if (Array.isArray(speak)) Audio.sayMix(speak);
+    else if (speak) Audio.sayEn(speak);
   }
 
   // =========================================================================
@@ -219,16 +241,14 @@
     start: function () {
       this.started = true;
       // A user gesture unlocks audio on most browsers — greet them right away.
-      Audio.say('Bonjour! Je m\'appelle Léo. On apprend les couleurs!');
+      Audio.sayEn("Hi! I'm Frederic. Let's learn colors!");
       this.show('cards');
     },
 
     // ---- step 2: flash cards ----------------------------------------------
     onEnter_cards: function () {
-      leoSay(
-        'Clique sur une carte pour voir la couleur ! 🎨',
-        'Clique sur une carte pour voir la couleur.'
-      );
+      guideSay('Tap a card to see the color! 🎨',
+        'Tap a card to see the color.');
       this._checkCardsComplete();
     },
 
@@ -239,11 +259,11 @@
       var self = this;
       COLORS.forEach(function (color) {
         var inner = el('div', { class: 'card-inner' }, [
-          // FRONT — what the child sees first: only the French word.
+          // FRONT — what the child sees first: only the French colour word.
           el('div', { class: 'card-face card-front' }, [
-            el('span', { class: 'card-hint', text: 'Quelle couleur ?' }),
+            el('span', { class: 'card-hint', text: 'What color?' }),
             el('span', { class: 'card-word', text: color.fr }),
-            el('span', { class: 'card-tap', text: '👆 Clique !' })
+            el('span', { class: 'card-tap', text: '👆 Tap!' })
           ]),
           // BACK — the reveal: the real colour, a picture, the word again.
           el('div', {
@@ -252,7 +272,7 @@
           }, [
             el('span', { class: 'card-emoji', text: color.emoji }),
             el('span', { class: 'card-word', text: color.fr }),
-            el('span', { class: 'card-thing', text: color.thingFr })
+            el('span', { class: 'card-thing', text: color.thing })
           ])
         ]);
 
@@ -261,7 +281,7 @@
           type: 'button',
           'data-color': color.id,
           'aria-pressed': 'false',
-          'aria-label': color.fr + '. Clique pour révéler la couleur.'
+          'aria-label': color.fr + ' (' + color.en + '). Tap to reveal the color.'
         }, [inner]);
 
         card.addEventListener('click', function () { self.flipCard(color.id); });
@@ -279,8 +299,8 @@
       if (nowRevealed) {
         this.revealed[id] = true;
         Audio.pop();
-        // Say the colour, then the little bonus noun.
-        Audio.say(color.fr + '. ' + color.thingFr + '.');
+        // Say the colour word in French — that's the thing to learn.
+        Audio.sayFr(color.fr);
         this._checkCardsComplete();
       }
     },
@@ -294,8 +314,8 @@
       }
       if (all && !this._cardsCelebrated) {
         this._cardsCelebrated = true;
-        leoSay('Bravo ! Tu connais les 4 couleurs ! 🌈',
-          'Bravo! Tu connais les quatre couleurs!');
+        guideSay('Great! You know all 4 colors! 🌈',
+          'Great! You know all four colors!');
       }
       return all;
     },
@@ -329,7 +349,7 @@
           type: 'button',
           'data-color': color.id,
           style: 'background:' + color.hex + ';',
-          'aria-label': color.fr
+          'aria-label': color.fr + ' (' + color.en + ')'
         }, [ el('span', { class: 'swatch-check', text: '✓' }) ]);
         swatch.addEventListener('click', function () { self.answer(color.id); });
         board.appendChild(swatch);
@@ -346,9 +366,16 @@
         s.disabled = false;
       });
       var prompt = $('#game-prompt');
-      if (prompt) prompt.textContent = 'Trouve… ' + g.target.fr + ' !';
+      if (prompt) {
+        prompt.innerHTML = '';
+        prompt.appendChild(document.createTextNode('Find '));
+        prompt.appendChild(el('span', { class: 'prompt-color', text: g.target.fr }));
+        prompt.appendChild(document.createTextNode('!'));
+      }
       this._updateStars();
-      leoSay('Trouve le ' + g.target.fr + ' !', 'Trouve… ' + g.target.fr + '.');
+      // English instruction, then the French colour word.
+      guideSay('Find ' + g.target.fr + '!',
+        [{ text: 'Find', lang: 'en-US' }, { text: g.target.fr, lang: 'fr-FR' }]);
     },
 
     answer: function (id) {
@@ -361,8 +388,8 @@
         if (swatch) swatch.classList.add('is-right');
         Audio.happy();
         Confetti.burst(70);
-        leoSay('Oui ! C\'est ' + g.target.fr + ' ! 🎉',
-          'Oui! C\'est ' + g.target.fr + '!');
+        guideSay('Yes! That\'s ' + g.target.fr + '! 🎉',
+          [{ text: 'Yes! That is', lang: 'en-US' }, { text: g.target.fr, lang: 'fr-FR' }]);
         g.index++;
         setTimeout(function () { app._askQuestion(); }, 1200);
       } else {
@@ -372,7 +399,7 @@
           setTimeout(function () { swatch.classList.remove('is-wrong'); }, 600);
         }
         Audio.oops();
-        leoSay('Essaie encore ! 💪', 'Essaie encore!');
+        guideSay('Try again! 💪', 'Try again!');
       }
     },
 
@@ -400,8 +427,8 @@
       if (score) {
         score.textContent = this.game.correct + ' / ' + COLORS.length;
       }
-      leoSay('Bravo ! Tu es un champion des couleurs ! 🏆🌈',
-        'Bravo! Tu es un champion des couleurs!');
+      guideSay('Great job! You are a color champion! 🏆🌈',
+        'Great job! You are a color champion!');
       Audio.happy();
       Confetti.burst(220);
     },
@@ -426,7 +453,7 @@
         btn.setAttribute('aria-pressed', Audio.enabled ? 'true' : 'false');
         btn.textContent = Audio.enabled ? '🔊' : '🔇';
         btn.setAttribute('aria-label',
-          Audio.enabled ? 'Couper le son' : 'Activer le son');
+          Audio.enabled ? 'Turn sound off' : 'Turn sound on');
       }
       if (Audio.enabled) Audio.pop();
       return Audio.enabled;
@@ -435,7 +462,7 @@
     // Small hook so tests can speak a colour on demand.
     sayColor: function (id) {
       var c = window.LESSON.getColor(id);
-      if (c) Audio.say(c.fr);
+      if (c) Audio.sayFr(c.fr);
     }
   };
 
